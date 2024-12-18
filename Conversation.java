@@ -1,80 +1,57 @@
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 /**
  * <p> This class can execute a basic conversation with the Chatbot. </p>
  * @author Amelia Quinn
- * @version 1.0
+ * @version 2.0
  */
 class Conversation {
-
   public static void main(String[] args) {
-    // first I create my scanner and my random instance
-    Scanner scanner = new Scanner(System.in);
-    Scanner scanner2 = new Scanner(System.in);
+    String[] inputs = {"I","me","am","you","my","your", "are", "You"};
+    String[] replacements = {"you", "you", "are", "I", "your", "my", "am", "I"};
+    String[] cannedResponses = {"Uh-huh.", "Mm-hm!", "Interesting!", "Tell me more!"};
+    ArrayList<String> transcript = new ArrayList<String>();
+    Scanner sc = new Scanner(System.in);
     Random random = new Random();
-    List<String> transcript = new ArrayList<>();
-// This boolean is to keep track of whether we're going to mirror the user's response
-    boolean mirror = false;
-    // then I'm making a list of all the pronouns I'm going to check for 
-    List<String> pronounList = new ArrayList<>();
-    pronounList.add("I");
-    pronounList.add("me");
-    pronounList.add("am");
-    pronounList.add("you");
-    pronounList.add("my");
-    pronounList.add("your");
-    // Then I make a corresponding lists of all the replaecment pronouns
-    List<String> replacementList = new ArrayList<>();
-    replacementList.add("you");
-    replacementList.add("you");
-    replacementList.add("are");
-    replacementList.add("I");
-    replacementList.add("your");
-    replacementList.add("my");
-    // Then we ask the user how many rounds and store their response
-    System.out.println("How many rounds?");
-    int roundCount = scanner.nextInt();
-    // Then we begin the conversation and iterate as many times as the user tells us!
-    String hello = "Hello! What's on your mind?";
-    System.out.println(hello);
-    transcript.add(hello);
-    for (int i=1; i<= roundCount; i++) {
-      Scanner newScanner = new Scanner(System.in);
-      String userResponse = newScanner.nextLine();
-      transcript.add(userResponse);
-      for (int n=0; n <= 5; n++) {
-        String pronoun = pronounList.get(n);
-        String replacement = replacementList.get(n);
-        if (userResponse.contains(pronoun)) {
-          userResponse = userResponse.replaceAll(pronoun,replacement);
-          mirror = true;
-        } }
-      if (mirror == true) {
-      System.out.println(userResponse + "?"); 
-      transcript.add(userResponse + "?");
-    } else {
-        List<String> cannedResponses = new ArrayList<>();
-        cannedResponses.add("Interesting!");
-        cannedResponses.add("Mm-hm!");
-        cannedResponses.add("Uh-huh.");
-        int randomIdentifier = random.nextInt(cannedResponses.size());
-        String randomResponse = cannedResponses.get(randomIdentifier);
-        System.out.println(randomResponse);
-        transcript.add(randomResponse);
+    String opener = "How many rounds?";
+    System.out.println(opener);
+    transcript.add(opener);
+    int roundNum = sc.nextInt();
+    transcript.add(String.valueOf(roundNum));
+    sc.nextLine();
+    System.out.println("What's on your mind?");
+    for (int n = 0; n < roundNum; n++) {
+      String input = sc.nextLine();
+      transcript.add(input);
+      String[] words = input.split(" ");
+      boolean changed = false;
+      outer:
+      for (int i=0; i < words.length; i++) {
+        for (int j = 0; j < inputs.length; j++) {
+          if (words[i].equals(inputs[j])) {
+            words[i] = replacements[j];
+            changed = true;
+            continue outer;
+          }     
         }
-        newScanner.close();
-       }
-       scanner.close();
-       scanner2.close();
-       System.out.println(transcript);
       }
-      
+      if (changed) {
+        String response = String.join(" ", words);
+        transcript.add(response);
+        System.out.println(response);
+      } else {
+        int randomNum = random.nextInt(cannedResponses.length);
+        String response = cannedResponses[randomNum];
+        transcript.add(response);
+        System.out.println(response);
       }
-    
-
-
-
-  
-
+    }
+    sc.close();
+    System.out.println("");
+    System.out.println("TRANSCRIPT:");
+    for (int i = 0; i < transcript.size(); i++) {
+      System.out.println(transcript.get(i));
+    }
+  }
+}
